@@ -25,6 +25,8 @@ public class OdometerService extends Service {
     private final Random random = new Random();
     private LocationListener listener;
     private LocationManager locManager;
+    private static double distanceInMeters;
+    private static Location lastLocation = null;
 
     public static final String PERMISSION_STRING = Manifest.permission.ACCESS_FINE_LOCATION;
 
@@ -34,7 +36,11 @@ public class OdometerService extends Service {
         listener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-
+                if (lastLocation == null) {
+                    lastLocation = location;
+                }
+                distanceInMeters += location.distanceTo(lastLocation);
+                lastLocation = location;
             }
 
             @Override
