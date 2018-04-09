@@ -15,16 +15,16 @@ public class MainActivity extends Activity {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             OdometerService.OdometerBinder odometerBinder =
-                    (OdometerService.OdometerBinder) binder;
+                    (OdometerService.OdometerBinder) iBinder;
             odometer = odometerBinder.getOdometer();
             bound = true;
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-
+            bound = false;
         }
-    }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
