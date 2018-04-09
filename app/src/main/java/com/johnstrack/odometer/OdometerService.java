@@ -68,7 +68,7 @@ public class OdometerService extends Service {
         }
     }
 
-    public class OdometerBinder extends Binder {
+    class OdometerBinder extends Binder {
         OdometerService getOdometer () {
             return OdometerService.this;
         }
@@ -80,6 +80,6 @@ public class OdometerService extends Service {
     }
 
     public double getDistance() {
-        return random.nextDouble();
+        return distanceInMeters / 1609.344;
     }
 }
