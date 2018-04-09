@@ -8,10 +8,16 @@ import android.os.IBinder;
 
 public class MainActivity extends Activity {
 
+    private OdometerService odometer;
+    private boolean bound = false;
+
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-
+            OdometerService.OdometerBinder odometerBinder =
+                    (OdometerService.OdometerBinder) binder;
+            odometer = odometerBinder.getOdometer();
+            bound = true;
         }
 
         @Override
