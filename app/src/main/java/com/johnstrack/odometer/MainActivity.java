@@ -8,7 +8,6 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.view.TextureView;
 import android.widget.TextView;
 
 import java.util.Locale;
@@ -37,7 +36,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        displayDistance ():
+        displayDistance ();
     }
 
     @Override
