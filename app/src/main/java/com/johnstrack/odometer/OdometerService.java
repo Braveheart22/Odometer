@@ -14,15 +14,12 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.content.ContextCompat;
 
-import java.util.Random;
-
 public class OdometerService extends Service {
 
     public OdometerService() {
     }
 
     private final IBinder binder = new OdometerBinder();
-    private final Random random = new Random();
     private LocationListener listener;
     private LocationManager locManager;
     private static double distanceInMeters;
@@ -77,6 +74,19 @@ public class OdometerService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return  binder;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if (locManager != null && listener !=  null) {
+            if (ContextCompat.checkSelfPermission(this, PERMISSION_STRING) == PackageManager.PERMISSION_GRANTED) {
+                locManager.removeUpdates(listener);
+            }
+            locManager = null;
+            listener = null;
+        }
     }
 
     public double getDistance() {
