@@ -1,6 +1,8 @@
 package com.johnstrack.odometer;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +11,9 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.widget.TextView;
 
@@ -20,6 +24,8 @@ public class MainActivity extends Activity {
     private OdometerService odometer;
     private boolean bound = false;
     private final int PERMISSION_REQUEST_CODE = 698;
+    private final int NOTIFICATION_ID = 423;
+    String NOTIFICATION_CHANNEL_ID = "my_channel_id_01";
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
@@ -78,5 +84,36 @@ public class MainActivity extends Activity {
                 handler.postDelayed(this, 1000);
             }
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Intent intent = new Intent(this, OdometerService.class);
+                    bindService(intent, connection, Context.BIND_AUTO_CREATE);
+                } else {
+                    //Create a notification builder
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+                            .setSmallIcon(android.R.drawable.ic_menu_compass)
+                            .setContentTitle(getResources().getString(R.string.app_name))
+                            .setContentText(getResources().getString(R.string.permission_denied))
+                            .setPriority(NotificationCompat.PRIORITY_HIGH)
+                            .setVibrate(new long[] {1000, 1000})
+                            .setAutoCancel(true);
+
+                    //Create an action
+                    Intent actionIntent = new Intent(this, MainActivity.class);
+                    PendingIntent actionPendingIntent = PendingIntent.getActivity(this, 0, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    builder.setContentIntent(actionPendingIntent);
+
+                    //Issue notification
+                    NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                    assert notificationManager != null;
+                    notificationManager.notify(NOTIFICATION_ID, builder.build());
+                }
+            }
+        }
     }
 }
